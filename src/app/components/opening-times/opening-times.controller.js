@@ -31,9 +31,9 @@ function OpeningTimesController(OpeningTimesService) {
     OpeningTimesService.resetTime(index, type)
   }
 
-  ctrl.hasLeastOneDayChecked = ()=> {
-    var result = ctrl.openingTimesDataForm.days.findIndex(x => x.checked === true);
-    return result < 0;
+  ctrl.hasLeastOneDayChecked = function (){
+    var result = ctrl.openingTimesDataForm.days.find(k => k.checked == true);
+    return !(result != undefined && typeof result == 'object'? true: false);
   }
 
 }
