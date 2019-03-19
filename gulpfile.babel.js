@@ -15,6 +15,7 @@ import child from "child_process";
 
 const exec = child.exec;
 const argv = yargs.argv;
+
 const root = "src/";
 const paths = {
   dist: "./dist/",
@@ -63,6 +64,11 @@ var bootstrapSass = {
   in: "./node_modules/bootstrap-sass/"
 };
 
+// Bootstrap fonts source
+var fonts = {
+  in: [root + 'fonts/*.*', bootstrapSass.in + 'assets/fonts/**/*'],
+  out: paths.dist + 'fonts/'
+};
 // css source file: .scss files
 var scss = {
   sassOpts: {
@@ -73,12 +79,21 @@ var scss = {
   }
 };
 
-gulp.task("styles", () => {
+// copy bootstrap required fonts to dest
+gulp.task('fonts', function () {
+  return gulp
+    .src(fonts.in)
+    .pipe(gulp.dest(fonts.out));
+});
+
+gulp.task("styles",['fonts'], () => {
   return gulp.src(paths.styles)
     .pipe(sass(scss.sassOpts))
     .pipe(sass({outputStyle: "compressed"}))
     .pipe(gulp.dest(paths.dist + "css/"));
 });
+
+
 
 gulp.task("scripts", ["modules"], () => {
   return gulp.src([
