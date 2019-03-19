@@ -12,8 +12,8 @@
         <tr ng-repeat="times in $ctrl.openingTimes">
           <th scope="row">{{times.name}}</th>
           <td>
-            de {{times.start.open.hours}}:{{times.start.open.minutes | zeroForNumberSingleDigit}} à {{times.start.close.hours}}:{{times.start.close.minutes | zeroForNumberSingleDigit}} <button class="btn btn-link glyphicon glyphicon-remove" aria-hidden="true" ng-click="$ctrl.deleteTime($index, 'start')"></button><br>
-            de {{times.end.open.hours}}:{{times.end.open.minutes | zeroForNumberSingleDigit}} à {{times.end.close.hours}}:{{times.end.close.minutes | zeroForNumberSingleDigit}} <button class="btn btn-link glyphicon glyphicon-remove" aria-hidden="true" ng-click="$ctrl.deleteTime($index, 'end')"></button>
+            <span ng-if="times.start.open.hours > 0 || times.start.open.minutes > 0 || times.start.close.hours > 0||times.start.close.minutes > 0">de {{times.start.open.hours}}:{{times.start.open.minutes | zeroForNumberSingleDigit}} à {{times.start.close.hours}}:{{times.start.close.minutes | zeroForNumberSingleDigit}} <button class="btn btn-link glyphicon glyphicon-remove" aria-hidden="true" ng-click="$ctrl.deleteTime($index, 'start')"></button></span><br>
+            <span ng-if="times.end.open.hours > 0 || times.end.open.minutes > 0 || times.end.close.hours > 0 || times.end.close.minutes > 0">de {{times.end.open.hours}}:{{times.end.open.minutes | zeroForNumberSingleDigit}} à {{times.end.close.hours}}:{{times.end.close.minutes | zeroForNumberSingleDigit}} <button class="btn btn-link glyphicon glyphicon-remove" aria-hidden="true" ng-click="$ctrl.deleteTime($index, 'end')"></button></span>
           </td>
         </tr>
         </tbody>
@@ -40,7 +40,7 @@
           <div class="col-md-12 padding-top">
             <div class="form-group" ng-class="{'has-error': openingTimesForm.openHours.$invalid }">
               <label for="openHours">De</label>
-              <input type="number" id="openHours" name="openHours"  step="1" min="0" max="23" ng-maxlength="2"  ng-model="$ctrl.openingTimesDataForm.open.hours" class="form-control" placeholder="00">
+              <input type="number" id="openHours" name="openHours"  step="1" min="0" max="23" ng-maxlength="2"  ng-model="$ctrl.openingTimesDataForm.open.hours" class="form-control" placeholder="0">
             </div>
             <div class="form-group" ng-class="{'has-error': openingTimesForm.openMinutes.$invalid}">
               <label for="openMinutes" >:</label>
@@ -48,15 +48,15 @@
             </div>
             <div class="form-group"  ng-class="{'has-error': openingTimesForm.closeHours.$invalid}">
               <label for="closeHours">à</label>
-              <input type="number" id="closeHours" name="closeHours" step="1" min="0" max="23" ng-maxlength="2"  ng-model="$ctrl.openingTimesDataForm.close.hours" class="form-control" placeholder="00">
+              <input type="number" id="closeHours" name="closeHours" step="1" min="0" max="23" ng-maxlength="2"  ng-model="$ctrl.openingTimesDataForm.close.hours" class="form-control" placeholder="0">
             </div>
             <div class="form-group" ng-class="{'has-error': openingTimesForm.closeMinutes.$invalid}">
               <label for="closeMinutes">:</label>
-              <input type="number" id="closeMinutes" name="closeMinutes" step="1" min="0" max="59" ng-minlength="$ctrl.openingTimesDataForm.close.minutes && 2 || 0" ng-maxlength="2" ng-model="$ctrl.openingTimesDataForm.close.minutes" class="form-control" placeholder="00">
+              <input type="number" id="closeMinutes" name="closeMinutes" step="1" min="0" max="59" ng-minlength="0" ng-maxlength="2" ng-model="$ctrl.openingTimesDataForm.close.minutes" class="form-control" placeholder="00">
             </div>
           </div>
           <div class="col-md-12 padding-top">
-            <button class="btn btn-lg btn-primary" ng-disabled="openingTimesForm.$invalid || $ctrl.hasLeastOneDayChecked()" type="submit">Submit</button>
+            <button class="btn btn-lg btn-primary" ng-disabled="$ctrl.hasLeastOneDayChecked()  " type="submit">Ajouter</button>
           </div>
         </form>
       </div>
