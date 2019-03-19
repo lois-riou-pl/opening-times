@@ -24,7 +24,8 @@ const paths = {
   modules: [
     "angular/angular.js",
     "angular-ui-router/release/angular-ui-router.js",
-    "bootstrap-sass"
+    "bootstrap-sass",
+    "moment/moment.js"
   ],
   static: [
     `${root}/index.html`,
