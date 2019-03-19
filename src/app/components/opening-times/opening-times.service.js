@@ -16,24 +16,76 @@ function OpeningTimesService() {
     for (var openingTime in openingTimes) {
       for (var dayForm in dataForm.days) {
         if (dataForm.days[dayForm].checked && dataForm.days[dayForm].name === openingTimes[openingTime].name) {
-          openingTimes[openingTime].start.open.hours = dataForm.open.hours;
-          openingTimes[openingTime].start.open.minutes = dataForm.open.minutes;
-          openingTimes[openingTime].start.close.hours = dataForm.close.hours;
-          openingTimes[openingTime].start.close.minutes = dataForm.close.minutes;
+          var times = openingTimes[openingTime];
+          var position = checkPosition(dataForm, times);
+          if (position === 'start' || position === 'end') {
+            times[position] = angular.copy(dataForm);
+          } else if (position === 'pop') {
+            times['start'] = angular.copy(times['end']);
+            times['end'] = angular.copy(dataForm);
+          } else if (position === 'push') {
+            times['end'] = angular.copy(times['start']);
+            times['start'] = angular.copy(dataForm);
+          } else if (position === 'merge') {
+            times['start'] = angular.copy(dataForm);
+            times['end'].open.hours = 0;
+            times['end'].open.minutes = 0;
+            times['end'].close.hours = 0;
+            times['end'].close.minutes = 0;
+          }
         }
       }
     }
+
+    return true;
+  }
+
+  function checkPosition(dataForm, times) {
+    var result;
+    if (!isFirstTime(times)) {
+      if (dataForm.close.hours < times.end.open.hours || dataForm.close.hours == times.end.open.hours && dataForm.close.minutes <= times.end.open.hours) {
+        result = 'start';
+      } else if (dataForm.open.hours <= times.start.close.hours && dataForm.close.hours >= times.end.open.hours && dataForm.close.hours >= times.start.open.hours  ){
+        result = 'merge'
+      } else if (dataForm.open.hours >= times.start.open.hours  &&  times.start.open.hours && dataForm.open.hours > times.start.close.hours ||
+        dataForm.open.hours >= times.start.open.hours && dataForm.close.hours == times.start.close.hours && dataForm.close.minutes <= times.start.close.minutes) {
+        result = 'end';
+      }  else if (dataForm.close.hours <= times.start.open.hours) {
+        result = 'push';
+      } else if (dataForm.open.hours > times.end.close.hours) {
+        result = 'pop';
+      }
+
+    } else {
+      result = 'start';
+    }
+
+    return result;
+  }
+
+  function isFirstTime(times){
+    return !!(times.start.open.hours === 0 && times.start.open.minutes === 0 && times.start.close.hours === 0 && times.start.close.minutes === 0 && times.end.open.hours === 0 && times.end.open.minutes === 0 && times.end.close.hours === 0 && times.end.close.minutes === 0)
   }
 
   function updateOpeningTimes(dataFrom) {
-    setTimeByDay(dataFrom);
+     return setTimeByDay(dataFrom);
+  }
+
+  function resetTime(index, type){
+    openingTimes[index][type].open.hours = 0;
+    openingTimes[index][type].open.minutes = 0;
+    openingTimes[index][type].close.hours = 0;
+    openingTimes[index][type].close.hours = 0;
   }
 
   return {
     getOpeningTimes: openingTimes,
     getDayNames: dayNames,
     updateOpeningTimes: function (dataForm) {
-      return updateOpeningTimes(dataForm)
+      return updateOpeningTimes(dataForm);
+    },
+    resetTime: function (index, type) {
+      return resetTime(index, type);
     }
   };
 }
